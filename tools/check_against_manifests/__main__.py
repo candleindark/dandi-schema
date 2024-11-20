@@ -41,6 +41,7 @@ def main():
             if dandiset_metadata_file_path.is_file():
                 dandiset_metadata = dandiset_metadata_file_path.read_text()
                 pydantic_validation_errs = pydantic_validate(dandiset_metadata, model)
+                # noinspection PyTypeChecker
                 validation_reports.append(
                     ValidationReport(
                         dandiset_identifier=dandiset_identifier,
