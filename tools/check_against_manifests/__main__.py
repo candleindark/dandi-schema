@@ -4,7 +4,7 @@ from pydantic import TypeAdapter
 
 from dandischema.models import Dandiset, PublishedDandiset
 
-from .models import ValidationReport
+from .models import DandisetValidationReport
 from .tools import iter_direct_subdirs, pydantic_validate
 
 MANIFEST_DIR = Path("/Users/isaac/Downloads/mnt/backup/dandi/dandiset-manifests-s3cmd")
@@ -12,12 +12,12 @@ DANDI_SET_FILE_NAME = "dandiset.jsonld"
 REPORTS_DIR = Path("../reports/validation")
 REPORTS_FILE = REPORTS_DIR / "validation_reports.json"
 
-validation_report_list_adapter = TypeAdapter(list[ValidationReport])
+dandiset_validation_report_list_adapter = TypeAdapter(list[DandisetValidationReport])
 
 
 def main():
 
-    validation_reports: list[ValidationReport] = []
+    validation_reports: list[DandisetValidationReport] = []
     for n, dandiset_dir in enumerate(
         sorted(iter_direct_subdirs(MANIFEST_DIR), key=lambda p: p.name)
     ):
@@ -43,7 +43,7 @@ def main():
                 pydantic_validation_errs = pydantic_validate(dandiset_metadata, model)
                 # noinspection PyTypeChecker
                 validation_reports.append(
-                    ValidationReport(
+                    DandisetValidationReport(
                         dandiset_identifier=dandiset_identifier,
                         dandiset_version=dandiset_version,
                         pydantic_validation_errs=pydantic_validation_errs,
@@ -53,7 +53,7 @@ def main():
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     output_path = REPORTS_FILE
     output_path.write_bytes(
-        validation_report_list_adapter.dump_json(validation_reports, indent=2)
+        dandiset_validation_report_list_adapter.dump_json(validation_reports, indent=2)
     )
 
 

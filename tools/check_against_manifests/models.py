@@ -16,3 +16,11 @@ class ValidationReport(BaseModel):
 
     # Error encountered in validation against a Pydantic model
     pydantic_validation_errs: Json[PydanticValidationErrsType] = []
+
+
+class DandisetValidationReport(ValidationReport):
+    """
+    A report of validation results of a dandiset metadata instance against the
+    `dandischema.models.Dandiset` or `dandischema.models.PublishedDandiset`
+    Pydantic model and the corresponding JSON schema.
+    """
