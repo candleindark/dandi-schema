@@ -9,6 +9,8 @@ from .tools import iter_direct_subdirs, pydantic_validate
 
 MANIFEST_DIR = Path("/Users/isaac/Downloads/mnt/backup/dandi/dandiset-manifests-s3cmd")
 DANDI_SET_FILE_NAME = "dandiset.jsonld"
+REPORTS_DIR = Path("../reports/validation")
+REPORTS_FILE = REPORTS_DIR / "validation_reports.json"
 
 validation_report_list_adapter = TypeAdapter(list[ValidationReport])
 
@@ -47,9 +49,10 @@ def main():
                     )
                 )
 
-    output_path = Path("validation_reports.json")
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = REPORTS_FILE
     output_path.write_bytes(
-        validation_report_list_adapter.dump_json(validation_reports)
+        validation_report_list_adapter.dump_json(validation_reports, indent=2)
     )
 
 
