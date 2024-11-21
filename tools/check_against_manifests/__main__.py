@@ -114,7 +114,9 @@ def main():
             append_dandiset_validation_report()
             extend_asset_validation_reports()
 
+    # Ensure directory for reports exists
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+
     output_path = REPORTS_FILE
     output_path.write_bytes(
         dandiset_validation_report_list_adapter.dump_json(
