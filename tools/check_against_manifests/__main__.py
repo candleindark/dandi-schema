@@ -8,7 +8,7 @@ from .models import DandisetValidationReport
 from .tools import iter_direct_subdirs, pydantic_validate
 
 MANIFEST_DIR = Path("/Users/isaac/Downloads/mnt/backup/dandi/dandiset-manifests-s3cmd")
-DANDI_SET_FILE_NAME = "dandiset.jsonld"
+DANDISET_FILE_NAME = "dandiset.jsonld"  # File with dandiset metadata
 REPORTS_DIR = Path("../reports/validation")
 REPORTS_FILE = REPORTS_DIR / "validation_reports.json"
 
@@ -36,7 +36,7 @@ def main():
             else:
                 model = PublishedDandiset
 
-            dandiset_metadata_file_path = version_dir / DANDI_SET_FILE_NAME
+            dandiset_metadata_file_path = version_dir / DANDISET_FILE_NAME
 
             if dandiset_metadata_file_path.is_file():
                 dandiset_metadata = dandiset_metadata_file_path.read_text()
