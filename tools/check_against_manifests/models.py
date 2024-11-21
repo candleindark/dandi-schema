@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Json
 
@@ -24,3 +24,14 @@ class DandisetValidationReport(ValidationReport):
     `dandischema.models.Dandiset` or `dandischema.models.PublishedDandiset`
     Pydantic model and the corresponding JSON schema.
     """
+
+
+class AssetValidationReport(ValidationReport):
+    """
+    A report of validation results of an asset metadata instance against the
+    `dandischema.models.Asset` or `dandischema.models.PublishedAsset`
+    Pydantic model and the corresponding JSON schema.
+    """
+
+    asset_id: Optional[str]
+    asset_path: Optional[str]

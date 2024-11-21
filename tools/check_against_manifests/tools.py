@@ -2,7 +2,9 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, Union
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, TypeAdapter, ValidationError
+
+from .models import ValidationReport
 
 
 def iter_direct_subdirs(path: Path) -> Iterable[Path]:
@@ -41,3 +43,16 @@ def pydantic_validate(data: Union[dict[str, Any], str], model: type[BaseModel]) 
         return e.json()
 
     return "[]"
+
+
+def write_reports(
+    file_path: Path, reports: list[ValidationReport], type_adapter: TypeAdapter
+) -> None:
+    """
+    Write a given list of validation reports to a specified file
+
+    :param file_path: The path specifying the file to write the reports to
+    :param reports: The list of validation reports to write
+    :param type_adapter: The type adapter to use for serializing the list of reports
+    """
+    file_path.write_bytes(type_adapter.dump_json(reports, indent=2))
