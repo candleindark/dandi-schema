@@ -9,12 +9,17 @@ from .models import AssetValidationReport, DandisetValidationReport
 from .tools import iter_direct_subdirs, pydantic_validate, write_reports
 
 MANIFEST_DIR = Path("/Users/isaac/Downloads/mnt/backup/dandi/dandiset-manifests-s3cmd")
+
+# metadata file names
 DANDISET_FILE_NAME = "dandiset.jsonld"  # File with dandiset metadata
 ASSETS_FILE_NAME = "assets.jsonld"  # File with assets metadata
+
+# Directory and file paths for reports
 REPORTS_DIR = Path("../reports/validation")
 REPORTS_FILE = REPORTS_DIR / "validation_reports.json"
 ASSET_PYDANTIC_REPORTS_FILE = REPORTS_DIR / "asset_pydantic_validation_reports.json"
 
+# Pydantic type adapters
 DANDISET_PYDANTIC_REPORT_LIST_ADAPTER = TypeAdapter(list[DandisetValidationReport])
 ASSET_PYDANTIC_REPORT_LIST_ADAPTER = TypeAdapter(list[AssetValidationReport])
 
