@@ -15,9 +15,11 @@ DANDISET_FILE_NAME = "dandiset.jsonld"  # File with dandiset metadata
 ASSETS_FILE_NAME = "assets.jsonld"  # File with assets metadata
 
 # Directory and file paths for reports
-REPORTS_DIR = Path("../reports/validation")
-REPORTS_FILE = REPORTS_DIR / "validation_reports.json"
-ASSET_PYDANTIC_REPORTS_FILE = REPORTS_DIR / "asset_pydantic_validation_reports.json"
+REPORTS_DIR_PATH = Path("../reports/validation")
+REPORTS_FILE_PATH = REPORTS_DIR_PATH / "validation_reports.json"
+ASSET_PYDANTIC_REPORTS_FILE_PATH = (
+    REPORTS_DIR_PATH / "asset_pydantic_validation_reports.json"
+)
 
 # Pydantic type adapters
 DANDISET_PYDANTIC_REPORT_LIST_ADAPTER = TypeAdapter(list[DandisetValidationReport])
@@ -120,18 +122,18 @@ def main():
             extend_asset_validation_reports()
 
     # Ensure directory for reports exists
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    REPORTS_DIR_PATH.mkdir(parents=True, exist_ok=True)
 
     # Write the dandiset Pydantic validation reports to a file
     write_reports(
-        REPORTS_FILE,
+        REPORTS_FILE_PATH,
         dandiset_validation_reports,
         DANDISET_PYDANTIC_REPORT_LIST_ADAPTER,
     )
 
     # Write the asset Pydantic validation reports to a file
     write_reports(
-        ASSET_PYDANTIC_REPORTS_FILE,
+        ASSET_PYDANTIC_REPORTS_FILE_PATH,
         asset_validation_reports,
         ASSET_PYDANTIC_REPORT_LIST_ADAPTER,
     )
