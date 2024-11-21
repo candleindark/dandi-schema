@@ -17,7 +17,7 @@ dandiset_validation_report_list_adapter = TypeAdapter(list[DandisetValidationRep
 
 def main():
 
-    validation_reports: list[DandisetValidationReport] = []
+    dandiset_validation_reports: list[DandisetValidationReport] = []
     for n, dandiset_dir in enumerate(
         sorted(iter_direct_subdirs(MANIFEST_DIR), key=lambda p: p.name)
     ):
@@ -42,7 +42,7 @@ def main():
                 dandiset_metadata = dandiset_metadata_file_path.read_text()
                 pydantic_validation_errs = pydantic_validate(dandiset_metadata, model)
                 # noinspection PyTypeChecker
-                validation_reports.append(
+                dandiset_validation_reports.append(
                     DandisetValidationReport(
                         dandiset_identifier=dandiset_identifier,
                         dandiset_version=dandiset_version,
@@ -53,7 +53,9 @@ def main():
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     output_path = REPORTS_FILE
     output_path.write_bytes(
-        dandiset_validation_report_list_adapter.dump_json(validation_reports, indent=2)
+        dandiset_validation_report_list_adapter.dump_json(
+            dandiset_validation_reports, indent=2
+        )
     )
 
 
