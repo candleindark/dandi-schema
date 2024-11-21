@@ -117,11 +117,11 @@ def main():
     # Ensure directory for reports exists
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    output_path = REPORTS_FILE
-    output_path.write_bytes(
-        dandiset_validation_report_list_adapter.dump_json(
-            dandiset_validation_reports, indent=2
-        )
+    # Write the dandiset Pydantic validation reports to a file
+    write_reports(
+        REPORTS_FILE,
+        dandiset_validation_reports,
+        dandiset_validation_report_list_adapter,
     )
 
     # Write the asset Pydantic validation reports to a file
