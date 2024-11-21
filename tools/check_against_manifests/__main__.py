@@ -17,7 +17,9 @@ ASSETS_FILE_NAME = "assets.jsonld"  # File with assets metadata
 
 # Directory and file paths for reports
 REPORTS_DIR_PATH = Path("../reports/validation")
-DANDISET_PYDANTIC_REPORTS_FILE_PATH = REPORTS_DIR_PATH / "validation_reports.json"
+DANDISET_PYDANTIC_REPORTS_FILE_PATH = (
+    REPORTS_DIR_PATH / "dandiset_pydantic_validation_reports.json"
+)
 ASSET_PYDANTIC_REPORTS_FILE_PATH = (
     REPORTS_DIR_PATH / "asset_pydantic_validation_reports.json"
 )
