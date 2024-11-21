@@ -16,6 +16,34 @@ dandiset_validation_report_list_adapter = TypeAdapter(list[DandisetValidationRep
 
 
 def main():
+    def append_dandiset_validation_report() -> None:
+        """
+        Append a `DandisetValidationReport` object to `dandiset_validation_reports`
+        if the current dandiset version directory contains a dandiset metadata file.
+        """
+        dandiset_metadata_file_path = version_dir / DANDISET_FILE_NAME
+
+        # Return immediately if the dandiset metadata file does not exist in the current
+        # dandiset version directory
+        if not dandiset_metadata_file_path.is_file():
+            return
+
+        # Get the Pydantic model to validate against
+        if dandiset_version == "draft":
+            model = Dandiset
+        else:
+            model = PublishedDandiset
+
+        dandiset_metadata = dandiset_metadata_file_path.read_text()
+        pydantic_validation_errs = pydantic_validate(dandiset_metadata, model)
+        # noinspection PyTypeChecker
+        dandiset_validation_reports.append(
+            DandisetValidationReport(
+                dandiset_identifier=dandiset_identifier,
+                dandiset_version=dandiset_version,
+                pydantic_validation_errs=pydantic_validation_errs,
+            )
+        )
 
     dandiset_validation_reports: list[DandisetValidationReport] = []
     for n, dandiset_dir in enumerate(
@@ -30,25 +58,7 @@ def main():
             dandiset_version = version_dir.name
             print(f"\tdandiset_version: {dandiset_version}")
 
-            # Get the Pydantic model to validate against
-            if dandiset_version == "draft":
-                model = Dandiset
-            else:
-                model = PublishedDandiset
-
-            dandiset_metadata_file_path = version_dir / DANDISET_FILE_NAME
-
-            if dandiset_metadata_file_path.is_file():
-                dandiset_metadata = dandiset_metadata_file_path.read_text()
-                pydantic_validation_errs = pydantic_validate(dandiset_metadata, model)
-                # noinspection PyTypeChecker
-                dandiset_validation_reports.append(
-                    DandisetValidationReport(
-                        dandiset_identifier=dandiset_identifier,
-                        dandiset_version=dandiset_version,
-                        pydantic_validation_errs=pydantic_validation_errs,
-                    )
-                )
+            append_dandiset_validation_report()
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     output_path = REPORTS_FILE
