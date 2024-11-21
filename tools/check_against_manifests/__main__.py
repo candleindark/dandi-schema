@@ -94,6 +94,7 @@ def main():
             asset_id = asset_metadata.get("id")
             asset_path = asset_metadata.get("path")
             pydantic_validation_errs = pydantic_validate(asset_metadata, model)
+            # noinspection PyTypeChecker
             asset_validation_reports.append(
                 AssetValidationReport(
                     dandiset_identifier=dandiset_identifier,
