@@ -17,7 +17,7 @@ ASSETS_FILE_NAME = "assets.jsonld"  # File with assets metadata
 
 # Directory and file paths for reports
 REPORTS_DIR_PATH = Path("../reports/validation")
-REPORTS_FILE_PATH = REPORTS_DIR_PATH / "validation_reports.json"
+DANDISET_PYDANTIC_REPORTS_FILE_PATH = REPORTS_DIR_PATH / "validation_reports.json"
 ASSET_PYDANTIC_REPORTS_FILE_PATH = (
     REPORTS_DIR_PATH / "asset_pydantic_validation_reports.json"
 )
@@ -128,7 +128,7 @@ def main():
 
     # Write the dandiset Pydantic validation reports to a file
     write_reports(
-        REPORTS_FILE_PATH,
+        DANDISET_PYDANTIC_REPORTS_FILE_PATH,
         dandiset_validation_reports,
         DANDISET_PYDANTIC_REPORT_LIST_ADAPTER,
     )
