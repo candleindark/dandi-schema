@@ -15,7 +15,7 @@ REPORTS_DIR = Path("../reports/validation")
 REPORTS_FILE = REPORTS_DIR / "validation_reports.json"
 ASSET_PYDANTIC_REPORTS_FILE = REPORTS_DIR / "asset_pydantic_validation_reports.json"
 
-dandiset_validation_report_list_adapter = TypeAdapter(list[DandisetValidationReport])
+DANDISET_PYDANTIC_REPORT_LIST_ADAPTER = TypeAdapter(list[DandisetValidationReport])
 ASSET_PYDANTIC_REPORT_LIST_ADAPTER = TypeAdapter(list[AssetValidationReport])
 
 
@@ -121,7 +121,7 @@ def main():
     write_reports(
         REPORTS_FILE,
         dandiset_validation_reports,
-        dandiset_validation_report_list_adapter,
+        DANDISET_PYDANTIC_REPORT_LIST_ADAPTER,
     )
 
     # Write the asset Pydantic validation reports to a file
