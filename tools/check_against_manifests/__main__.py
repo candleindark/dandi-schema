@@ -8,6 +8,7 @@ from dandischema.models import Asset, Dandiset, PublishedAsset, PublishedDandise
 from .models import AssetValidationReport, DandisetValidationReport
 from .tools import iter_direct_subdirs, pydantic_validate, write_reports
 
+# Directory containing dandiset manifests
 MANIFEST_DIR = Path("/Users/isaac/Downloads/mnt/backup/dandi/dandiset-manifests-s3cmd")
 
 # metadata file names
