@@ -1,6 +1,8 @@
 from collections import namedtuple
 from enum import Enum
+import importlib
 from inspect import isclass
+import sys
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
 
 import pydantic
@@ -733,3 +735,35 @@ class TestContributor:
         Test creating a `Contributor` instance with an email
         """
         Contributor(email="nemo@dandiarchive.org", roleName=roles)
+
+
+_VENDORIZABLE_MODULES = ("dandischema.conf", "dandischema.models")
+
+
+@pytest.fixture
+def model_module_fresh():
+    """
+    Return a *callable* that, when invoked, gives a freshly-imported
+    model module and restores the original model module at teardown.
+    """
+    modules = sys.modules
+
+    saved = {name: modules[name] for name in _VENDORIZABLE_MODULES if name in modules}
+
+    def make_fresh():
+        # 1. clear any existing copies
+        for name in _VENDORIZABLE_MODULES:
+            modules.pop(name, None)
+        # 2. import the models module
+        models_ = importlib.import_module("dandischema.models")
+        return models_
+
+    # 👉 yield the function itself
+    yield make_fresh
+
+    # --- teardown ----------------------------------------------------------
+
+    for name in _VENDORIZABLE_MODULES:
+        modules.pop(name, None)  # drop whatever the test left
+    for name in saved:
+        modules[name] = saved[name]  # restore original copy
