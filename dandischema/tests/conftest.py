@@ -2,6 +2,7 @@ import os
 import sys
 from typing import Generator, Iterator
 
+from pydantic import TypeAdapter, ValidationError
 import pytest
 
 
@@ -16,24 +17,25 @@ def disable_http() -> Iterator[None]:
         yield
 
 
+_ENV_DICT_ADAPTER = TypeAdapter(dict[str, str])
+
+
 @pytest.fixture
 def clear_dandischema_modules_and_set_env_vars(
     request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
 ) -> Generator[None, None, None]:
     """
     This fixture clears all `dandischema` modules from `sys.modules` and sets
-    environment variables for configuring `config.CONFIG` which configures the
-    `dandischema` modules.
+    environment variables.
 
     With this fixture, tests can import `dandischema` modules cleanly in an environment
     defined by the provided values for the environment variables.
 
     This fixture expects values for the environment variables to be passed indirectly
     from the calling test function using `request.param`. `request.param` should be a
-    dictionary containing the following keys for setting environment variables of
-    the same respective names in upper case and prefixed with "DANDI_SCHEMA_".
-        `"id_pattern"`
-        `"datacite_doi_id_pattern"`
+    `dict[str, str]`. Each value in the dictionary will be used to set an environment
+    variable with the name that is the same as its key but in upper case and prefixed
+    with "DANDI_SCHEMA_".
 
     Example usage:
     ```python
@@ -65,7 +67,18 @@ def clear_dandischema_modules_and_set_env_vars(
     thread of this fixture are modifying `sys.modules` during the execution of this
     fixture, which should be a common situation.
     """
-    params = ["id_pattern", "datacite_doi_id_pattern"]
+    # Check if the calling test has passed valid `indirect` arguments
+    ev = ValueError(
+        "The calling test must use the `indirect` parameter to pass "
+        "a `dict[str, str]` for setting environment variables."
+    )
+    if not hasattr(request, "param"):
+        raise ev
+    try:
+        _ENV_DICT_ADAPTER.validate_python(request.param, strict=True)
+    except ValidationError as e:
+        raise ev from e
+
     modules = sys.modules
     modules_original = modules.copy()
 
@@ -74,11 +87,9 @@ def clear_dandischema_modules_and_set_env_vars(
         if name.startswith("dandischema.") or name == "dandischema":
             del modules[name]
 
-    # Monkey patch environment variables to configure `config.CONFIG`
-    for param in params:
-        param_value = request.param[param]
-        if param_value is not None:
-            monkeypatch.setenv(f"DANDI_SCHEMA_{param.upper()}", param_value)
+    # Monkey patch environment variables with arguments from the calling test
+    for k, v in request.param.items():
+        monkeypatch.setenv(f"DANDI_SCHEMA_{k.upper()}", v)
 
     yield
 

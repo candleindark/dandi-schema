@@ -745,10 +745,7 @@ class TestContributor:
     [
         # Without any environment variables set. dandischema is unvendorized.
         (
-            {
-                "id_pattern": None,
-                "datacite_doi_id_pattern": None,
-            },
+            {},
             r"[A-Z]+",
             r"\d{4,}",
         ),
