@@ -733,3 +733,52 @@ class TestContributor:
         Test creating a `Contributor` instance with an email
         """
         Contributor(email="nemo@dandiarchive.org", roleName=roles)
+
+
+@pytest.mark.parametrize(
+    (
+        "clear_dandischema_modules_and_set_env_vars",
+        # "exp" means "expected" in the following names
+        "exp_id_pattern",
+        "exp_datacite_doi_id_pattern",
+    ),
+    [
+        (
+            {
+                "id_pattern": None,
+                "datacite_doi_id_pattern": None,
+            },
+            r"[A-Z]+",
+            r"\d{4,}",
+        ),
+        (
+            {
+                "id_pattern": "DANDI",
+                "datacite_doi_id_pattern": "48324",
+            },
+            "DANDI",
+            "48324",
+        ),
+        (
+            {
+                "id_pattern": "EMBER",
+                "datacite_doi_id_pattern": "60533",
+            },
+            "EMBER",
+            "60533",
+        ),
+    ],
+    indirect=["clear_dandischema_modules_and_set_env_vars"],
+)
+def test_vendorization(
+    clear_dandischema_modules_and_set_env_vars: None,
+    exp_id_pattern: str,
+    exp_datacite_doi_id_pattern: str,
+) -> None:
+    """
+    Test the vendorization of the DANDI schema
+    """
+    import dandischema.models as models_
+
+    assert models_.ID_PATTERN == exp_id_pattern
+    assert models_.DATACITE_DOI_ID_PATTERN == exp_datacite_doi_id_pattern
