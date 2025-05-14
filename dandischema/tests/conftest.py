@@ -2,8 +2,11 @@ import os
 import sys
 from typing import Generator, Iterator
 
-from pydantic import TypeAdapter, ValidationError
+from pydantic import ConfigDict, TypeAdapter, ValidationError
 import pytest
+from typing_extensions import TypedDict
+
+from dandischema.conf import Config
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -17,7 +20,19 @@ def disable_http() -> Iterator[None]:
         yield
 
 
-_ENV_DICT_ADAPTER = TypeAdapter(dict[str, str])
+_CONFIG_PARAMS = list(Config.model_fields)
+"""Configuration parameters of the `dandischema` package"""
+# noinspection PyTypedDict
+_ENV_DICT = TypedDict(
+    "_ENV_DICT", {fname: str for fname in _CONFIG_PARAMS}, total=False
+)
+_ENV_DICT.__pydantic_config__ = ConfigDict(
+    # Values have to be strictly of type `str`
+    strict=True,
+    # Keys not listed are not allowed
+    extra="forbid",
+)
+_ENV_DICT_ADAPTER = TypeAdapter(_ENV_DICT)
 
 
 @pytest.fixture
@@ -26,16 +41,17 @@ def clear_dandischema_modules_and_set_env_vars(
 ) -> Generator[None, None, None]:
     """
     This fixture clears all `dandischema` modules from `sys.modules` and sets
-    environment variables.
+    environment variables that configure the `dandischema` package.
 
     With this fixture, tests can import `dandischema` modules cleanly in an environment
     defined by the provided values for the environment variables.
 
     This fixture expects values for the environment variables to be passed indirectly
     from the calling test function using `request.param`. `request.param` should be a
-    `dict[str, str]`. Each value in the dictionary will be used to set an environment
-    variable with the name that is the same as its key but in upper case and prefixed
-    with "DANDI_SCHEMA_".
+    `dict[str, str]` consisting of keys that are a subset of the fields of
+    `dandischema.conf.Config`. Each value in the dictionary will be used to set an
+    environment variable with a name that is the same as its key but in upper case and
+    prefixed with "DANDI_SCHEMA_".
 
     Example usage:
     ```python
@@ -75,7 +91,7 @@ def clear_dandischema_modules_and_set_env_vars(
     if not hasattr(request, "param"):
         raise ev
     try:
-        _ENV_DICT_ADAPTER.validate_python(request.param, strict=True)
+        _ENV_DICT_ADAPTER.validate_python(request.param)
     except ValidationError as e:
         raise ev from e
 
@@ -88,8 +104,11 @@ def clear_dandischema_modules_and_set_env_vars(
             del modules[name]
 
     # Monkey patch environment variables with arguments from the calling test
-    for k, v in request.param.items():
-        monkeypatch.setenv(f"DANDI_SCHEMA_{k.upper()}", v)
+    for p in _CONFIG_PARAMS:
+        if p in request.param:
+            monkeypatch.setenv(f"DANDI_SCHEMA_{p.upper()}", request.param[p])
+        else:
+            monkeypatch.delenv(f"DANDI_SCHEMA_{p.upper()}", raising=False)
 
     yield
 
