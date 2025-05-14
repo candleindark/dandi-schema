@@ -23,10 +23,10 @@ def disable_http() -> Iterator[None]:
 _CONFIG_PARAMS = list(Config.model_fields)
 """Configuration parameters of the `dandischema` package"""
 # noinspection PyTypedDict
-_ENV_DICT = TypedDict(
+_ENV_DICT = TypedDict(  # type: ignore[misc]
     "_ENV_DICT", {fname: str for fname in _CONFIG_PARAMS}, total=False
 )
-_ENV_DICT.__pydantic_config__ = ConfigDict(
+_ENV_DICT.__pydantic_config__ = ConfigDict(  # type: ignore[attr-defined]
     # Values have to be strictly of type `str`
     strict=True,
     # Keys not listed are not allowed
