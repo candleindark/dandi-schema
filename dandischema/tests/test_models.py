@@ -760,6 +760,7 @@ def _get_field_pattern(
     field = model.model_fields[field_name]
     for data in field.metadata:
         if hasattr(data, "pattern"):
+            assert isinstance(data.pattern, str)
             return data.pattern
     else:
         raise ValueError(
