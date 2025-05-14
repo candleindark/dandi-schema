@@ -33,7 +33,7 @@ def clear_dandischema_modules_and_set_env_vars(
     dictionary containing the following keys for setting environment variables of
     the same respective names in upper case and prefixed with "DANDI_SCHEMA_".
         `"id_pattern"`
-        `"dandi_schema_datacite_doi_id_pattern"`
+        `"datacite_doi_id_pattern"`
 
     Example usage:
     ```python
@@ -42,11 +42,11 @@ def clear_dandischema_modules_and_set_env_vars(
         [
             {
                 "id_pattern": "DANDI",
-                "dandi_schema_datacite_doi_id_pattern": "48324",
+                "datacite_doi_id_pattern": "48324",
             },
             {
                 "id_pattern": "EMBER",
-                "dandi_schema_datacite_doi_id_pattern": "60533",
+                "datacite_doi_id_pattern": "60533",
             }
         ],
         indirect=True,
@@ -65,7 +65,7 @@ def clear_dandischema_modules_and_set_env_vars(
     thread of this fixture are modifying `sys.modules` during the execution of this
     fixture, which should be a common situation.
     """
-    params = ["id_pattern", "dandi_schema_datacite_doi_id_pattern"]
+    params = ["id_pattern", "datacite_doi_id_pattern"]
     modules = sys.modules
     modules_original = modules.copy()
 
