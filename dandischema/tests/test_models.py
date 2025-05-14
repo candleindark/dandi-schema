@@ -4,7 +4,7 @@ from inspect import isclass
 from typing import Any, Dict, List, Literal, Optional, Tuple, Type, Union, cast
 
 import pydantic
-from pydantic import Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 import pytest
 
 from .utils import _basic_publishmeta
@@ -733,6 +733,39 @@ class TestContributor:
         Test creating a `Contributor` instance with an email
         """
         Contributor(email="nemo@dandiarchive.org", roleName=roles)
+
+
+def _get_field_pattern(
+    field_name: str,
+    model: Type[BaseModel],
+) -> str:
+    """
+    Get the regex pattern for a field in a Pydantic model.
+
+    Parameters
+    ----------
+    field_name : str
+        The name of the field to get the pattern for.
+    model : Type[BaseModel]
+        The Pydantic model class.
+
+    Returns
+    -------
+    str
+        The regex pattern for the field.
+    """
+    if field_name not in model.model_fields:
+        raise ValueError(f"Field '{field_name}' not found in model '{model.__name__}'")
+
+    field = model.model_fields[field_name]
+    for data in field.metadata:
+        if hasattr(data, "pattern"):
+            return data.pattern
+    else:
+        raise ValueError(
+            f"field `{field_name}` in model `{model.__name__}` has no pattern "
+            f"constraint"
+        )
 
 
 @pytest.mark.parametrize(
