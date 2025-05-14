@@ -61,25 +61,23 @@ def clear_dandischema_modules_and_set_env_vars(
     When this fixture is torn down, it restores the original `sys.modules` and undo
     the environment variable changes made.
     """
+    params = ["id_pattern", "dandi_schema_datacite_doi_id_pattern"]
     modules = sys.modules
     modules_original = modules.copy()
 
     # Remove all dandischema modules from sys.modules
-    for name in modules:
+    for name in list(modules):
         if name.startswith("dandischema.") or name == "dandischema":
             del modules[name]
 
     # Monkey patch environment variables to configure `config.CONFIG`
-    monkeypatch.setenv("DANDI_SCHEMA_ID_PATTERN", request.param["id_pattern"])
-    monkeypatch.setenv(
-        "DANDI_SCHEMA_DATACITE_DOI_ID_PATTERN",
-        request.param["dandi_schema_datacite_doi_id_pattern"],
-    )
+    for param in params:
+        monkeypatch.setenv(f"DANDI_SCHEMA_{param.upper()}", request.param[param])
 
     yield
 
     # Restore the original modules
-    for name in modules:
+    for name in list(modules):
         if name not in modules_original:
             del modules[name]
     modules.update(modules_original)
