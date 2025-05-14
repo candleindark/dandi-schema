@@ -9,7 +9,13 @@ from jsonschema.protocols import Validator as JsonschemaValidator
 from pydantic import BaseModel
 import pytest
 
-from dandischema.models import Asset, Dandiset, PublishedAsset, PublishedDandiset
+from dandischema.models import (
+    ID_PATTERN,
+    Asset,
+    Dandiset,
+    PublishedAsset,
+    PublishedDandiset,
+)
 from dandischema.utils import TransitionalGenerateJsonSchema, jsonschema_validator
 
 from .utils import skipif_no_network
@@ -46,7 +52,7 @@ def test_asset(schema_dir: Path) -> None:
 
 
 def test_dandiset(schema_dir: Path) -> None:
-    with (METADATA_DIR / "meta_000004.json").open() as fp:
+    with (METADATA_DIR / ID_PATTERN / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = DANDI_SCHEMA_VERSION
     _validate_dandiset_json(data_as_dict, schema_dir)
@@ -60,7 +66,7 @@ def test_id(schema_dir: Path) -> None:
 
 @skipif_no_network
 def test_pydantic_validation(schema_dir: Path) -> None:
-    with (METADATA_DIR / "meta_000004.json").open() as fp:
+    with (METADATA_DIR / ID_PATTERN / "meta_000004.json").open() as fp:
         data_as_dict = json.load(fp)
     data_as_dict["schemaVersion"] = "0.4.4"
     validate(data_as_dict, schema_key="Dandiset", json_validation=True)
