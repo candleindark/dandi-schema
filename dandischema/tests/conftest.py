@@ -42,11 +42,11 @@ def clear_dandischema_modules_and_set_env_vars(
         [
             {
                 "id_pattern": "DANDI",
-                "datacite_doi_id_pattern": "48324",
+                "datacite_doi_id_pattern": r"(48324|80507)",
             },
             {
                 "id_pattern": "EMBER",
-                "datacite_doi_id_pattern": "60533",
+                "datacite_doi_id_pattern": r"(60533|82754)",
             }
         ],
         indirect=True,
