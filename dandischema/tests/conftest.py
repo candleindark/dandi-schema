@@ -76,7 +76,9 @@ def clear_dandischema_modules_and_set_env_vars(
 
     # Monkey patch environment variables to configure `config.CONFIG`
     for param in params:
-        monkeypatch.setenv(f"DANDI_SCHEMA_{param.upper()}", request.param[param])
+        param_value = request.param[param]
+        if param_value is not None:
+            monkeypatch.setenv(f"DANDI_SCHEMA_{param.upper()}", param_value)
 
     yield
 
