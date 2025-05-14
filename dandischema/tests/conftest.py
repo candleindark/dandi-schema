@@ -60,6 +60,10 @@ def clear_dandischema_modules_and_set_env_vars(
     ----
     When this fixture is torn down, it restores the original `sys.modules` and undo
     the environment variable changes made.
+
+    The user of this fixture needs to ensure that no other threads besides a calling
+    thread of this fixture are modifying `sys.modules` during the execution of this
+    fixture, which should be a common situation.
     """
     params = ["id_pattern", "dandi_schema_datacite_doi_id_pattern"]
     modules = sys.modules
