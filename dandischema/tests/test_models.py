@@ -769,6 +769,21 @@ def _get_field_pattern(
         )
 
 
+class _VendoredFieldModel(BaseModel):
+    """
+    A model consisting of fields with vendorized patterns in `dandischema.models`
+    """
+
+    dandiset_id: str = Field(pattern=_get_field_pattern("dandiset_id", Dandiset))
+    dandiset_identifier: str = Field(pattern=_get_field_pattern("identifier", Dandiset))
+    published_dandiset_id: str = Field(
+        pattern=_get_field_pattern("id", PublishedDandiset)
+    )
+    published_dandiset_doi: str = Field(
+        pattern=_get_field_pattern("doi", PublishedDandiset)
+    )
+
+
 @pytest.mark.parametrize(
     (
         "clear_dandischema_modules_and_set_env_vars",
